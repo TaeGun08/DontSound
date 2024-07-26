@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class MoveController : MonoBehaviour
 {
+    private PlayerBehaviorCheck playerBehaviorCheck; //플레이어의 행동을 체크하는 스크립트
+
     private CharacterController characterController; //플레이어의 캐릭터 컨트롤러
 
     [Header("플레이어 움직임 설정")]
@@ -17,6 +19,7 @@ public class MoveController : MonoBehaviour
 
     private void Awake()
     {
+        playerBehaviorCheck = GetComponent<PlayerBehaviorCheck>();
         characterController = GetComponent<CharacterController>();
     }
 
@@ -39,24 +42,41 @@ public class MoveController : MonoBehaviour
     /// </summary>
     private void playerMove()
     {
+        if (!Input.GetKey(KeyCode.W) &&
+            !Input.GetKey(KeyCode.S) &&
+            !Input.GetKey(KeyCode.D) &&
+            !Input.GetKey(KeyCode.A) &&
+            playerBehaviorCheck.IsBehavior == true)
+        {
+            playerBehaviorCheck.IsBehavior = false;
+        }
+
         if (Input.GetKey(KeyCode.W))
         {
             playerWalkOrRunCheck(1);
         }
-
-        if (Input.GetKey(KeyCode.S))
+        else if (Input.GetKey(KeyCode.S))
         {
             playerWalkOrRunCheck(2);
+        }
+        else if ((!Input.GetKey(KeyCode.W) ||
+              !Input.GetKey(KeyCode.S)) && playerBehaviorCheck.IsVertical == 1)
+        {
+            playerBehaviorCheck.IsVertical = 0;
         }
 
         if (Input.GetKey(KeyCode.D))
         {
             playerWalkOrRunCheck(3);
         }
-
-        if (Input.GetKey(KeyCode.A))
+        else if (Input.GetKey(KeyCode.A))
         {
             playerWalkOrRunCheck(4);
+        }
+        else if ((!Input.GetKey(KeyCode.D) ||
+            !Input.GetKey(KeyCode.A)) && playerBehaviorCheck.IsHorizontal == 1)
+        {
+            playerBehaviorCheck.IsHorizontal = 0;
         }
     }
 
@@ -67,6 +87,9 @@ public class MoveController : MonoBehaviour
     {
         if (!Input.GetKey(KeyCode.LeftShift) || (Input.GetKey(KeyCode.LeftShift) && stamina <= 0 ))
         {
+            playerBehaviorCheck.IsBehavior = true;
+            playerBehaviorCheck.WalkRunCheck = 0;
+
             if (runCheck == true)
             {
                 runCheck = false;
@@ -75,22 +98,29 @@ public class MoveController : MonoBehaviour
             if (_directionNumber == 1)
             {
                 characterController.Move(transform.forward.normalized * walkSpeed * Time.deltaTime);
+                playerBehaviorCheck.IsVertical = 1;
             }
             else if (_directionNumber == 2)
             {
                 characterController.Move(-transform.forward.normalized * walkSpeed * Time.deltaTime);
+                playerBehaviorCheck.IsVertical = -1;
             }
             else if (_directionNumber == 3)
             {
                 characterController.Move(transform.right.normalized * walkSpeed * Time.deltaTime);
+                playerBehaviorCheck.IsHorizontal = 1;
             }
             else if (_directionNumber == 4)
             {
                 characterController.Move(-transform.right.normalized * walkSpeed * Time.deltaTime);
+                playerBehaviorCheck.IsHorizontal = -1;
             }
         }
         else if (Input.GetKey(KeyCode.LeftShift) && stamina > 0)
         {
+            playerBehaviorCheck.IsBehavior = true;
+            playerBehaviorCheck.WalkRunCheck = 1;
+
             if (runCheck == false)
             {
                 runCheck = true;
@@ -101,18 +131,22 @@ public class MoveController : MonoBehaviour
             if (_directionNumber == 1)
             {
                 characterController.Move(transform.forward.normalized * runSpeed * Time.deltaTime);
+                playerBehaviorCheck.IsVertical = 1;
             }
             else if (_directionNumber == 2)
             {
                 characterController.Move(-transform.forward.normalized * runSpeed * Time.deltaTime);
+                playerBehaviorCheck.IsVertical = -1;
             }
             else if (_directionNumber == 3)
             {
                 characterController.Move(transform.right.normalized * runSpeed * Time.deltaTime);
+                playerBehaviorCheck.IsHorizontal = 1;
             }
             else if (_directionNumber == 4)
             {
                 characterController.Move(-transform.right.normalized * runSpeed * Time.deltaTime);
+                playerBehaviorCheck.IsHorizontal = -1;
             }
         }
     }

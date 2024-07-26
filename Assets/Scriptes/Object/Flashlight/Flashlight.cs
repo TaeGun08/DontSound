@@ -4,15 +4,20 @@ using UnityEngine;
 
 public class Flashlight : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private GameObject spotLight; //손전등 불빛 오브젝트
+
+    private void Awake()
     {
-        
+        spotLight = transform.GetChild(0).gameObject;
+
+        spotLight.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
+    /// <summary>
+    /// 손전등을 켜고 끄는 함수
+    /// </summary>
+    public void LightOnOff(bool _onOff)
     {
-        
+        spotLight.SetActive(_onOff);
     }
 }
