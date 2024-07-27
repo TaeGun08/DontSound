@@ -47,9 +47,17 @@ public class ItemPickUp : MonoBehaviour
                 inventory.SetItem(hit.collider.gameObject);
                 hit.collider.enabled = false;
                 hit.collider.transform.GetChild(0).gameObject.SetActive(true);
-                hit.collider.transform.SetParent(CameraManager.Instance.GetCamera(0).transform);
-                hit.collider.transform.position = CameraManager.Instance.GetCamera(0).transform.position + new Vector3(0f, 0.2f, -0.15f);
-                hit.collider.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
+                Transform trsCamera = CameraManager.Instance.GetCamera(0).transform;
+                hit.collider.transform.SetParent(trsCamera);
+                hit.collider.transform.position = trsCamera.position + new Vector3(0f, 0.2f, -0.15f);
+                Vector3 curPos = hit.collider.transform.localPosition;
+                curPos.x = 0f;
+                curPos.y = 0.2f;
+                curPos.z = -0.15f;
+                hit.collider.transform.localPosition = curPos;
+
+                //hit.collider.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
+                hit.collider.transform.rotation = trsCamera.rotation * Quaternion.Euler(new Vector3(90f, 0f, 0));
             }
         }
         else

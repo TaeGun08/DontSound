@@ -12,7 +12,6 @@ public class MoveController : MonoBehaviour
     [SerializeField, Tooltip("플레이어의 걷는 속도")] private float walkSpeed;
     [SerializeField, Tooltip("플레이어의 뛰는 속도")] private float runSpeed;
     private bool runCheck = false; //플레이어가 달리고 있는지 확인하기 위한 함수, 달리고 있다면 스테미너가 충전되지 않도록 제어
-    [SerializeField, Tooltip("플레이어의 점프 힘")] private float jumpPower;
     [SerializeField, Tooltip("플레이어의 중력")] private float gravity;
     [Space]
     [SerializeField, Tooltip("플레이어의 스테미너")] private float stamina;
@@ -32,7 +31,6 @@ public class MoveController : MonoBehaviour
     {
         playerMove();
         playerMouseRotate();
-        playerJump();
         playerGravity();
         playerStamina();
     }
@@ -60,7 +58,9 @@ public class MoveController : MonoBehaviour
             playerWalkOrRunCheck(2);
         }
         else if ((!Input.GetKey(KeyCode.W) ||
-              !Input.GetKey(KeyCode.S)) && playerBehaviorCheck.IsVertical == 1)
+              !Input.GetKey(KeyCode.S)) && 
+              (playerBehaviorCheck.IsVertical == 1 ||
+              playerBehaviorCheck.IsVertical == -1))
         {
             playerBehaviorCheck.IsVertical = 0;
         }
@@ -74,7 +74,9 @@ public class MoveController : MonoBehaviour
             playerWalkOrRunCheck(4);
         }
         else if ((!Input.GetKey(KeyCode.D) ||
-            !Input.GetKey(KeyCode.A)) && playerBehaviorCheck.IsHorizontal == 1)
+            !Input.GetKey(KeyCode.A)) &&
+            (playerBehaviorCheck.IsHorizontal == 1 ||
+              playerBehaviorCheck.IsHorizontal == -1))
         {
             playerBehaviorCheck.IsHorizontal = 0;
         }
@@ -126,7 +128,7 @@ public class MoveController : MonoBehaviour
                 runCheck = true;
             }
 
-            stamina -= Time.deltaTime * 30;
+            stamina -= Time.deltaTime * 15;
 
             if (_directionNumber == 1)
             {
@@ -163,17 +165,6 @@ public class MoveController : MonoBehaviour
         else
         {
             characterController.Move(new Vector3(0f, 0f, 0f));
-        }
-    }
-
-    /// <summary>
-    /// 플레이어가 점프를 할 수 있게 해주는 함수
-    /// </summary>
-    private void playerJump()
-    {
-        if (Input.GetKeyDown(KeyCode.Space) && characterController.isGrounded == true)
-        {
-            characterController.Move(new Vector3(0f, jumpPower, 0f) * Time.deltaTime);
         }
     }
 
