@@ -30,10 +30,12 @@ public class Monster : MonoBehaviour
 
     private bool randomPos = false; //몬스터가 적을 추격하고 있지 않을 때 랜덤한 위치로 움직이게 만들어주는 변수
     private float randomPosTimer = 0f; //몬스터가 다음 랜덤한 위치로 이동할 수 있게 만들어주는 변수
-    [SerializeField] private int randomNumber = 0; //랜덤한 번호를 받아올 변수
+    private bool randomArrive = true;//랜덤한위치로 이동을 완료했는지
+    private Vector3 randomDetination; //랜덤한 위치
 
     [Header("플레이어를 확인할 콜라이더")]
     [SerializeField] private List<FindPlayerColl> findPlayers;
+
 
     private void Awake()
     {
@@ -47,8 +49,11 @@ public class Monster : MonoBehaviour
         player = gameManager.GetPlayer();
         playerBehavior = player.GetComponent<PlayerBehaviorCheck>();
 
-        int randomNum = Random.Range(0, 9);
-        randomNumber = randomNum;
+        //int randomNum = Random.Range(0, 9);
+        //randomNumber = randomNum;
+
+        //Vector3 destination = gameManager.GetMonsterPlaceToGo().GetToGoTrs(randomNumber).position;
+        //agent.SetDestination(destination);
     }
 
     private void Update()
@@ -77,7 +82,7 @@ public class Monster : MonoBehaviour
             {
                 anim.SetBool("isRoar", false);
                 anim.SetBool("isAngry", true);
-                agent.speed = 3.5f;
+                agent.speed = 3f;
                 roarTimer = 0f;
                 roarCheck = false;
                 angryMode = true;
@@ -105,9 +110,7 @@ public class Monster : MonoBehaviour
 
             if (aggroTimer >= 10f)
             {
-                int randomNum = Random.Range(0, 9);
-                randomNumber = randomNum;
-                agent.SetDestination(gameManager.GetMonsterPlaceToGo().GetToGoTrs(randomNumber).position);
+                agent.SetDestination(gameManager.GetMonsterPlaceToGo().GetToGoTrs(Random.Range(0, 9)).position);
 
                 aggroTimer = 0;
                 aggroCheck = false;
@@ -146,17 +149,19 @@ public class Monster : MonoBehaviour
             }
         }
 
-        if (randomPos == true)
+        if (randomPos == true && randomArrive == true)
         {
             randomPosTimer += Time.deltaTime;
 
-            if (randomPosTimer >= 10)
+            if (randomPosTimer >= 0)
             {
-                int randomNum = Random.Range(0, 9);
-                randomNumber = randomNum;
+                randomDetination = gameManager.GetMonsterPlaceToGo().GetToGoTrs(Random.Range(0, 9)).position;
+                agent.SetDestination(randomDetination);
+                randomDetination.y = 0;
 
                 randomPosTimer = 0;
                 randomPos = false;
+                randomArrive = false;
             }
         }
     }
@@ -190,15 +195,23 @@ public class Monster : MonoBehaviour
         }
         else if (findPlayers[0].GetPlayer() != null && playerBehavior.IsBehavior == false && angryMode == false)
         {
-            aggroCheck = true;
+            //aggroCheck = true;
         }
         else if (findPlayers[0].GetPlayer() == null && playerBehavior.IsBehavior == false)
         {
+            if (angryMode == false)
+            {
+                anim.SetBool("isWalk", agent.velocity.x != 0 || agent.velocity.y != 0);
+            }
+
             randomPos = true;
 
-            anim.SetBool("isWalk", true);
-
-            agent.SetDestination(gameManager.GetMonsterPlaceToGo().GetToGoTrs(randomNumber).position);
+            Vector3 checkPos = transform.position;
+            checkPos.y = 0;
+            if (Vector3.Distance(randomDetination, checkPos) <= 0.1f)
+            {
+                randomArrive = true;
+            }
         }
     }
 }
