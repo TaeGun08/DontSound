@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MoveController : MonoBehaviour
 {
+    private CanvasManager canvasManager; //캔버스매니저
+
     private PlayerBehaviorCheck playerBehaviorCheck; //플레이어의 행동을 체크하는 스크립트
 
     private CharacterController characterController; //플레이어의 캐릭터 컨트롤러
@@ -24,6 +27,8 @@ public class MoveController : MonoBehaviour
 
     private void Start()
     {
+        canvasManager = CanvasManager.Instance;
+
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -173,9 +178,27 @@ public class MoveController : MonoBehaviour
     /// </summary>
     private void playerStamina()
     {
+        if (stamina > 100)
+        {
+            stamina = 100;
+        }
+
         if (!Input.GetKey(KeyCode.LeftShift) && stamina < 100)
         {
             stamina += Time.deltaTime * 10;
+        }
+
+        if (stamina < 100)
+        {
+            if (canvasManager.GetCanvas().transform.Find("StaminaBar").gameObject.activeSelf == false)
+            {
+                canvasManager.GetCanvas().transform.Find("StaminaBar").gameObject.SetActive(true);
+            }
+            canvasManager.GetCanvas().transform.Find("StaminaBar").GetComponent<Image>().fillAmount = stamina / 100;
+        }
+        else
+        {
+            canvasManager.GetCanvas().transform.Find("StaminaBar").gameObject.SetActive(false);
         }
     }
 

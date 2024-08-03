@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ItemPickUp : MonoBehaviour
 {
@@ -44,20 +45,36 @@ public class ItemPickUp : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.E))
             {
-                inventory.SetItem(hit.collider.gameObject);
-                hit.collider.enabled = false;
-                hit.collider.transform.GetChild(0).gameObject.SetActive(true);
-                Transform trsCamera = CameraManager.Instance.GetCamera(0).transform;
-                hit.collider.transform.SetParent(trsCamera);
-                hit.collider.transform.position = trsCamera.position + new Vector3(0f, 0.2f, -0.15f);
-                Vector3 curPos = hit.collider.transform.localPosition;
-                curPos.x = 0f;
-                curPos.y = 0.2f;
-                curPos.z = -0.15f;
-                hit.collider.transform.localPosition = curPos;
+                if (hit.collider.tag == "Flashlight")
+                {
+                    inventory.SetItem(hit.collider.gameObject);
+                    hit.collider.enabled = false;
+                    hit.collider.transform.GetChild(0).gameObject.SetActive(true);
+                    Transform trsCamera = CameraManager.Instance.GetCamera(0).transform;
+                    hit.collider.transform.SetParent(trsCamera);
+                    hit.collider.transform.position = trsCamera.position + new Vector3(0f, 0.2f, -0.15f);
+                    Vector3 curPos = hit.collider.transform.localPosition;
+                    curPos.x = 0f;
+                    curPos.y = 0.2f;
+                    curPos.z = -0.15f;
+                    hit.collider.transform.localPosition = curPos;
 
-                //hit.collider.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
-                hit.collider.transform.rotation = trsCamera.rotation * Quaternion.Euler(new Vector3(90f, 0f, 0));
+                    //hit.collider.transform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
+                    hit.collider.transform.rotation = trsCamera.rotation * Quaternion.Euler(new Vector3(90f, 0f, 0));
+                }
+                else if (hit.collider.tag == "Key")
+                {
+                    inventory.SetItem(hit.collider.gameObject);
+                    inventory.KeyCountUp();
+                    hit.collider.gameObject.SetActive(false);
+                }
+                else
+                {
+                    if (inventory.GetKeyCount() == 3)
+                    {
+                        SceneManager.LoadSceneAsync("GameEnd");
+                    }
+                }
             }
         }
         else

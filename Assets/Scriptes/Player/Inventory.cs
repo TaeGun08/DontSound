@@ -6,6 +6,7 @@ public class Inventory : MonoBehaviour
 {
     [Header("인벤토리")]
     [SerializeField, Tooltip("인벤토리 공간")] private GameObject[] items;
+    private int keyCount; //열쇠를 몇개 가지고 있는지 체크하기 위한 변수
 
     private void Awake()
     {
@@ -28,5 +29,22 @@ public class Inventory : MonoBehaviour
                 break;
             }
         }
+    }
+
+    /// <summary>
+    /// 키를 먹었을 때 카운트를 올려주기 위한 함수
+    /// </summary>
+    public void KeyCountUp()
+    {
+        keyCount++;
+    }
+
+    /// <summary>
+    /// 키 카운트를 가져오기 위한 함수
+    /// </summary>
+    /// <returns></returns>
+    public int GetKeyCount()
+    {
+        return keyCount;
     }
 }

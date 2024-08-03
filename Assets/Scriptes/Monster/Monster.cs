@@ -5,6 +5,8 @@ using UnityEngine.AI;
 
 public class Monster : MonoBehaviour
 {
+    private GameManager gameManager; //게임매니저
+
     private NavMeshAgent agent; //몬스터의 AI
 
     private Animator anim; //몬스터의 애니메이터
@@ -23,6 +25,12 @@ public class Monster : MonoBehaviour
 
     private bool sniffCheck = false; //몬스터의 냄새 맞는 모션이 작동을 했는지 체크하기 위한 변수
     private float sniffTimer = 0f; //몬스터가 냄새 맞는 동안 몬스터를 멈추게 해줄 시간
+    private bool sniffCoolCheck;
+    private float sniffCoolTimer = 0f;
+
+    private bool randomPos = false; //몬스터가 적을 추격하고 있지 않을 때 랜덤한 위치로 움직이게 만들어주는 변수
+    private float randomPosTimer = 0f; //몬스터가 다음 랜덤한 위치로 이동할 수 있게 만들어주는 변수
+    [SerializeField] private int randomNumber = 0; //랜덤한 번호를 받아올 변수
 
     [Header("플레이어를 확인할 콜라이더")]
     [SerializeField] private List<FindPlayerColl> findPlayers;
@@ -35,8 +43,12 @@ public class Monster : MonoBehaviour
 
     private void Start()
     {
-        player = GameManager.Instance.GetPlayer();
+        gameManager = GameManager.Instance;
+        player = gameManager.GetPlayer();
         playerBehavior = player.GetComponent<PlayerBehaviorCheck>();
+
+        int randomNum = Random.Range(0, 9);
+        randomNumber = randomNum;
     }
 
     private void Update()
@@ -56,16 +68,14 @@ public class Monster : MonoBehaviour
 
             if (roarTimer <= 0.1f)
             {
+                findPlayers[0].SetBoxCollSize(new Vector3(100f, 40f, 100f));
                 anim.SetBool("isRoar", true);
                 agent.speed = 0f;
-            }
-            else
-            {
-                anim.SetBool("isRoar", false);
             }
 
             if (roarTimer >= 5f)
             {
+                anim.SetBool("isRoar", false);
                 anim.SetBool("isAngry", true);
                 agent.speed = 3.5f;
                 roarTimer = 0f;
@@ -78,8 +88,9 @@ public class Monster : MonoBehaviour
         {
             angryTimer += Time.deltaTime;
 
-            if (angryTimer >= 10f)
+            if (angryTimer >= 20f)
             {
+                findPlayers[0].ResetBoxCollSize();
                 anim.SetBool("isAngry", false);
                 anim.SetBool("isWalk", true);
                 angryTimer = 0f;
@@ -92,15 +103,30 @@ public class Monster : MonoBehaviour
         {
             aggroTimer += Time.deltaTime;
 
-            if (aggroTimer >= 5f)
+            if (aggroTimer >= 10f)
             {
+                int randomNum = Random.Range(0, 9);
+                randomNumber = randomNum;
+                agent.SetDestination(gameManager.GetMonsterPlaceToGo().GetToGoTrs(randomNumber).position);
+
                 aggroTimer = 0;
                 aggroCheck = false;
                 sniffCheck = true;
             }
         }
 
-        if (sniffCheck == true)
+        if (sniffCoolCheck == true)
+        {
+            sniffCoolTimer += Time.deltaTime;
+
+            if (sniffCoolTimer >= 5f)
+            {
+                sniffCoolTimer = 0;
+                sniffCoolCheck = false;
+            }
+        }
+
+        if (sniffCheck == true && sniffCoolCheck == false)
         {
             sniffTimer += Time.deltaTime;
 
@@ -109,16 +135,28 @@ public class Monster : MonoBehaviour
                 agent.speed = 0f;
                 anim.SetBool("isSniff", true);
             }
-            else
+
+             if (sniffTimer >= 5f)
             {
                 anim.SetBool("isSniff", false);
-            }
-
-             if (sniffTimer >= 4f)
-            {
                 agent.speed = 2f;
                 sniffTimer = 0;
                 sniffCheck = false;
+                sniffCoolCheck = true;
+            }
+        }
+
+        if (randomPos == true)
+        {
+            randomPosTimer += Time.deltaTime;
+
+            if (randomPosTimer >= 10)
+            {
+                int randomNum = Random.Range(0, 9);
+                randomNumber = randomNum;
+
+                randomPosTimer = 0;
+                randomPos = false;
             }
         }
     }
@@ -130,24 +168,37 @@ public class Monster : MonoBehaviour
     {
         if (findPlayers[1].GetPlayer() != null && playerBehavior.IsBehavior == true)
         {
-            roarCheck = true;
-            agent.SetDestination(GameManager.Instance.GetPlayer().transform.position);
+            if (sniffCheck == false)
+            {
+                roarCheck = true;
+            }
+
+            agent.SetDestination(gameManager.GetPlayer().transform.position);
         }
         else if (findPlayers[0].GetPlayer() != null && playerBehavior.IsBehavior == true)
         {
-            agent.SetDestination(GameManager.Instance.GetPlayer().transform.position);
+            if (playerBehavior.WalkRunCheck == 1 && sniffCheck == false)
+            {
+                roarCheck = true;
+            }
+            agent.SetDestination(gameManager.GetPlayer().transform.position);
 
             if (roarCheck == false && angryMode == false)
             {
                 anim.SetBool("isWalk", true);
             }
         }
-        else if (findPlayers[0].GetPlayer() != null && playerBehavior.IsBehavior == false)
+        else if (findPlayers[0].GetPlayer() != null && playerBehavior.IsBehavior == false && angryMode == false)
         {
-            if (roarCheck == false && angryMode == false && aggroCheck == false)
-            {
-                aggroCheck = true;
-            }
+            aggroCheck = true;
+        }
+        else if (findPlayers[0].GetPlayer() == null && playerBehavior.IsBehavior == false)
+        {
+            randomPos = true;
+
+            anim.SetBool("isWalk", true);
+
+            agent.SetDestination(gameManager.GetMonsterPlaceToGo().GetToGoTrs(randomNumber).position);
         }
     }
 }
