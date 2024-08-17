@@ -139,7 +139,7 @@ public class Monster : MonoBehaviour
                 anim.SetBool("isSniff", true);
             }
 
-             if (sniffTimer >= 5f)
+             if (sniffTimer >= 4f)
             {
                 anim.SetBool("isSniff", false);
                 agent.speed = 2f;
@@ -153,7 +153,7 @@ public class Monster : MonoBehaviour
         {
             randomPosTimer += Time.deltaTime;
 
-            if (randomPosTimer >= 0)
+            if (randomPosTimer >= 5f)
             {
                 randomDetination = gameManager.GetMonsterPlaceToGo().GetToGoTrs(Random.Range(0, 9)).position;
                 agent.SetDestination(randomDetination);
@@ -208,8 +208,9 @@ public class Monster : MonoBehaviour
 
             Vector3 checkPos = transform.position;
             checkPos.y = 0;
-            if (Vector3.Distance(randomDetination, checkPos) <= 0.1f)
+            if (Vector3.Distance(randomDetination, checkPos) <= 0.1f && randomArrive == false)
             {
+                sniffCheck = true;
                 randomArrive = true;
             }
         }

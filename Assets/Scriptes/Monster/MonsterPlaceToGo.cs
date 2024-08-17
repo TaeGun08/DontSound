@@ -15,5 +15,5 @@ public class MonsterPlaceToGo : MonoBehaviour
     public Transform GetToGoTrs(int _toGo)
     {
         return toGoTrs[_toGo];
-    } 
+    }
 }
