@@ -67,18 +67,18 @@ public class Monster : MonoBehaviour
     /// </summary>
     private void timers()
     {
-        if (roarCheck == true && angryMode == false)
+        if (roarCheck == true && angryMode == false) // 몬스터가 울부짖은 후 화남 상태로 변형
         {
             roarTimer += Time.deltaTime;
 
-            if (roarTimer <= 0.1f)
+            if (roarTimer <= 0.1f) // 몬스터가 플레이어를 추적하는 boxcollider 크기를 더 크게 만들고, 울부짖는 모션을 실행하도록 만듦
             {
                 findPlayers[0].SetBoxCollSize(new Vector3(100f, 40f, 100f));
                 anim.SetBool("isRoar", true);
                 agent.speed = 0f;
             }
 
-            if (roarTimer >= 5f)
+            if (roarTimer >= 5f) // 5초 후 울부짖는 모션을 멈추고 플레이어를 빨리 추적할 수 있도록 이동속도를 올려줌, 화남 상태의 모드도 활성화 시켜줌
             {
                 anim.SetBool("isRoar", false);
                 anim.SetBool("isAngry", true);
@@ -90,7 +90,7 @@ public class Monster : MonoBehaviour
         }
 
         if (angryMode == true && findPlayers[1].GetPlayer() == null && roarCheck == false)
-        {
+        { // 화남 상태의 모드가 활성화 중이고, 플레이어가 추적 콜라이더에 없다면 일정시간 후 화남 상태를 풀어 줌
             angryTimer += Time.deltaTime;
 
             if (angryTimer >= 20f)
@@ -104,7 +104,7 @@ public class Monster : MonoBehaviour
             }
         }
 
-        if (aggroCheck == true)
+        if (aggroCheck == true) // 몬스터의 어그로에 풀렸는지 체크
         {
             aggroTimer += Time.deltaTime;
 
@@ -118,7 +118,7 @@ public class Monster : MonoBehaviour
             }
         }
 
-        if (sniffCoolCheck == true)
+        if (sniffCoolCheck == true) // sniff를 다시 하기 위한 쿨타임
         {
             sniffCoolTimer += Time.deltaTime;
 
@@ -129,17 +129,17 @@ public class Monster : MonoBehaviour
             }
         }
 
-        if (sniffCheck == true && sniffCoolCheck == false)
+        if (sniffCheck == true && sniffCoolCheck == false) // sniff를 할 수 있는 상황인지 체크
         {
             sniffTimer += Time.deltaTime;
 
-            if (sniffTimer <= 0.1f)
+            if (sniffTimer <= 0.1f) // sniff 행동을 하기 위해 AI의 이동속도를 0으로 만들어 움직이지 못하게 하고 애니메이션을 작동시킴
             {
                 agent.speed = 0f;
                 anim.SetBool("isSniff", true);
             }
 
-             if (sniffTimer >= 4f)
+             if (sniffTimer >= 4f) // 4초 이상의 시간이 지나면 애니메이션을 꺼주고  AI를 다시 움직이게 만들어 줌
             {
                 anim.SetBool("isSniff", false);
                 agent.speed = 2f;
@@ -149,11 +149,11 @@ public class Monster : MonoBehaviour
             }
         }
 
-        if (randomPos == true && randomArrive == true)
+        if (randomPos == true && randomArrive == true) // 몬스터가 여러개로 지정한 위치를 랜덤으로 선택해서 갈 수 있게 만들어 줌
         {
             randomPosTimer += Time.deltaTime;
 
-            if (randomPosTimer >= 5f)
+            if (randomPosTimer >= 5f) // 몬스터가 지정한 위치에 도착 후 5초가 지나면 다시 랜덤한 위치를 받아서 움직일 수 있게 만들어 줌
             {
                 randomDetination = gameManager.GetMonsterPlaceToGo().GetToGoTrs(Random.Range(0, 9)).position;
                 agent.SetDestination(randomDetination);
@@ -169,10 +169,10 @@ public class Monster : MonoBehaviour
     /// <summary>
     /// 플레이어가 콜라이더에 들어왔을 때 플레이어를 추격할 수 있게 만들어주는 함수
     /// </summary>
-    private void playerBehaviorCheck()
-    {
+    private void playerBehaviorCheck()  //findPlayers[1].GetPlayer()은 몬스터의 근처에 왔을 때 움직이면 체크하는 콜라이더
+    {                                                //findPlayers[0].GetPlayer()은 몬스터의 멀리에서 움직였을 때 체크하는 콜라이더
         if (findPlayers[1].GetPlayer() != null && playerBehavior.IsBehavior == true)
-        {
+        { //플레이어를 추적하는 콜라이더에 있고, 플레이어가 움직이고 있다면 화남 상태로 돌입할 수 있도록 만들어 줌
             if (sniffCheck == false)
             {
                 roarCheck = true;
@@ -181,7 +181,7 @@ public class Monster : MonoBehaviour
             agent.SetDestination(gameManager.GetPlayer().transform.position);
         }
         else if (findPlayers[0].GetPlayer() != null && playerBehavior.IsBehavior == true)
-        {
+        { //플레이어를 추적하는 콜라이더에 있고, 플레이어가 움직이고 있다면 추적할 수있게 뛰었다면 화남 상태로 돌입할 수 있게
             if (playerBehavior.WalkRunCheck == 1 && sniffCheck == false)
             {
                 roarCheck = true;
@@ -193,12 +193,12 @@ public class Monster : MonoBehaviour
                 anim.SetBool("isWalk", true);
             }
         }
-        else if (findPlayers[0].GetPlayer() != null && playerBehavior.IsBehavior == false && angryMode == false)
-        {
-            //aggroCheck = true;
-        }
+        //else if (findPlayers[0].GetPlayer() != null && playerBehavior.IsBehavior == false && angryMode == false)
+        //{
+        //    //aggroCheck = true;
+        //}
         else if (findPlayers[0].GetPlayer() == null && playerBehavior.IsBehavior == false)
-        {
+        { //플레이어가 콜라이더 밖에 있으면 랜덤으로 지정한 위치로 이동할 수 있게 만들어 줌
             if (angryMode == false)
             {
                 anim.SetBool("isWalk", agent.velocity.x != 0 || agent.velocity.y != 0);
@@ -209,7 +209,7 @@ public class Monster : MonoBehaviour
             Vector3 checkPos = transform.position;
             checkPos.y = 0;
             if (Vector3.Distance(randomDetination, checkPos) <= 0.1f && randomArrive == false)
-            {
+            { //랜덤으로 지정된 위치에 도착하면 sniff를 활성화 시켜주고 다시 랜덤한 위치로 이동할 수 있게 randomArrive도 활성화 해줌
                 sniffCheck = true;
                 randomArrive = true;
             }
