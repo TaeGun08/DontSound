@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class MainTitleManager : MonoBehaviour
 {
+    private SettingManager settingManager;
+
     [Header("시작 버튼")]
     [SerializeField] private Button startButton;
 
@@ -18,6 +20,11 @@ public class MainTitleManager : MonoBehaviour
     private void Awake()
     {
         buttons();
+    }
+
+    private void Start()
+    {
+        settingManager = SettingManager.Instance;
     }
 
     /// <summary>
@@ -37,7 +44,7 @@ public class MainTitleManager : MonoBehaviour
 
         settingButton.onClick.AddListener(() =>
         {
-
+            settingManager.SettingObject().SetActive(false != false ? false : true);
         });
 
         exitButton.onClick.AddListener(() =>
