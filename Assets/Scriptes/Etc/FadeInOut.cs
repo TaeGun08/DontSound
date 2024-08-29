@@ -73,7 +73,6 @@ public class FadeInOut : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
 
-
         Time.timeScale = 0;
 
         int currentFrm = 0;
@@ -88,7 +87,6 @@ public class FadeInOut : MonoBehaviour
         targetColor.a = fade == true ? 0 : 1;
 
         float ratio = 0;
-
 
         float fakeLoadingTime = 1.5f;
         float timer = 0;
@@ -142,7 +140,6 @@ public class FadeInOut : MonoBehaviour
                     }
                 }
                 break;
-
             case false:
                 {
                     if (actionFadeOut != null)

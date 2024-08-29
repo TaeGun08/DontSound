@@ -32,7 +32,7 @@ public class MainTitleManager : MonoBehaviour
     /// </summary>
     private void buttons()
     {
-        startButton.onClick.AddListener(() => 
+        startButton.onClick.AddListener(() =>
         {
             FadeInOut.Instance.SetActive(false, () =>
             {
@@ -44,7 +44,7 @@ public class MainTitleManager : MonoBehaviour
 
         settingButton.onClick.AddListener(() =>
         {
-            settingManager.SettingObject().SetActive(false != false ? false : true);
+            settingManager.SettingObject().SetActive(true);
         });
 
         exitButton.onClick.AddListener(() =>
