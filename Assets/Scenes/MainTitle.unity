@@ -1515,6 +1515,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fadeTime: 2
   targetFrm: 34
+  timer: 0
 --- !u!114 &1932401900
 MonoBehaviour:
   m_ObjectHideFlags: 0

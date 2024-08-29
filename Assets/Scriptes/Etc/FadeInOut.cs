@@ -13,8 +13,10 @@ public class FadeInOut : MonoBehaviour
 
     [SerializeField] int targetFrm = 34;
 
-    UnityAction actionFadeOut;//페이드 아웃 되었을때 동작할 기능
-    UnityAction actionFadeIn;//페이드 인 되었을때 동작할 기능
+    private float timer;
+
+    private UnityAction actionFadeOut;//페이드 아웃 되었을때 동작할 기능
+    private UnityAction actionFadeIn;//페이드 인 되었을때 동작할 기능
 
     bool fade = true;//true가 In false가 Out;
 
@@ -89,7 +91,7 @@ public class FadeInOut : MonoBehaviour
         float ratio = 0;
 
         float fakeLoadingTime = 1.5f;
-        float timer = 0;
+        timer = 0;
 
         imgFade.raycastTarget = true;
 
