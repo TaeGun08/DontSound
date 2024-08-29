@@ -73,6 +73,7 @@ public class FadeInOut : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
 
+
         Time.timeScale = 0;
 
         int currentFrm = 0;
@@ -91,6 +92,8 @@ public class FadeInOut : MonoBehaviour
 
         float fakeLoadingTime = 1.5f;
         float timer = 0;
+
+        imgFade.raycastTarget = true;
 
         //yield return new WaitUntil(() =>
         //{
@@ -122,6 +125,7 @@ public class FadeInOut : MonoBehaviour
         }
 
         invokeAction(fade);
+
         imgFade.raycastTarget = imgFade.color.a != 0;
     }
 

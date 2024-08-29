@@ -10,6 +10,14 @@ public class SettingManager : MonoBehaviour
 {
     public static SettingManager Instance;
 
+    public class SaveSetting
+    {
+        public List<float> sliders = new List<float>(); // 저장된 배경음, 효과음, 민감도 설정을 위한 슬라이더
+        public bool windowToggle; // 저장된 창모드를 위한 토글
+    }
+
+    private SaveSetting saveSetting = new SaveSetting();
+
     [Header("설정 캔버스")]
     [SerializeField] private GameObject settingCanvas;
     private GameObject settingObject; // 설정 캔버스의 오브젝트
@@ -52,6 +60,11 @@ public class SettingManager : MonoBehaviour
         saveButton();
     }
 
+    private void Update()
+    {
+        textChange();
+    }
+
     /// <summary>
     /// 설정창을 닫는 버튼
     /// </summary>
@@ -74,18 +87,26 @@ public class SettingManager : MonoBehaviour
         {
             for (int iNum = 0; iNum < count; iNum++)
             {
+                saveSetting.sliders.Add(0.5f);
+                saveSetting.windowToggle = false;
                 sliders[iNum].value = 0.5f;
+                windowToggle.isOn = false;
             }
         }
         else
         {
             string getSaveSetting = PlayerPrefs.GetString("saveSetting");
+            saveSetting = JsonConvert.DeserializeObject<SaveSetting>(getSaveSetting);
 
             for (int iNum = 0; iNum < count; iNum++)
             {
-                sliders[iNum].value = JsonConvert.DeserializeObject<float>(getSaveSetting);
+                sliders[iNum].value = saveSetting.sliders[iNum];
             }
+
+            windowToggle.isOn = saveSetting.windowToggle;
         }
+
+        Screen.SetResolution(1920, 1080, windowToggle.isOn);
     }
 
     /// <summary>
@@ -97,9 +118,28 @@ public class SettingManager : MonoBehaviour
         {
             int count = sliders.Count;
 
-            string setSaveSetting = JsonConvert.SerializeObject(sliders);
+            for (int iNum = 0; iNum < count; iNum++)
+            {
+                saveSetting.sliders[iNum] = sliders[iNum].value;
+            }
+
+            saveSetting.windowToggle = windowToggle.isOn;
+
+            string setSaveSetting = JsonConvert.SerializeObject(saveSetting);
             PlayerPrefs.SetString("saveSetting", setSaveSetting);
+
+            Screen.SetResolution(1920, 1080, windowToggle.isOn);
         });
+    }
+
+    /// <summary>
+    /// 수치를 눈으로 보여주기 위한 텍스트를 실시간으로 수치를 변경하기 위한 함수
+    /// </summary>
+    private void textChange()
+    {
+        valueText[0].text = $"{(sliders[0].value * 100).ToString("F0")}";
+        valueText[1].text = $"{(sliders[1].value * 100).ToString("F0")}";
+        valueText[2].text = $"{sliders[2].value.ToString("F1")}";
     }
 
 
