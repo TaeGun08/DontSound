@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class Monster : MonoBehaviour
 {
@@ -34,8 +35,7 @@ public class Monster : MonoBehaviour
     private Vector3 randomDetination; //랜덤한 위치
 
     [Header("플레이어를 확인할 콜라이더")]
-    [SerializeField] private List<FindPlayerColl> findPlayers;
-
+    [SerializeField] private List<FindPlayerColl> findPlayers; 
 
     private void Awake()
     {

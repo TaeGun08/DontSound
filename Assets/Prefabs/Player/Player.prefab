@@ -2173,7 +2173,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkSpeed: 2
   runSpeed: 4
-  jumpPower: 20
   gravity: 9
   stamina: 100
 --- !u!114 &9219655024225869475
