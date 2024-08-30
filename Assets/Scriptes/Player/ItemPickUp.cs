@@ -17,6 +17,8 @@ public class ItemPickUp : MonoBehaviour
     private bool notEscapeCheck; //탈출할 수 없을 때 뜨게 하기 위한 변수
     private float notEscapeTextTimer; //열쇠가 부족하면 일정 시간동안 텍스트를 띄울 시간
 
+    private bool escape = false; //탈출을 했는지
+
     private Color textColor;
 
     private void Awake()
@@ -97,11 +99,14 @@ public class ItemPickUp : MonoBehaviour
                 }
                 else
                 {
-                    if (inventory.GetKeyCount() == 3)
+                    if (inventory.GetKeyCount() == 3 && escape == false)
                     {
                         FadeInOut.Instance.SetActive(false, () =>
                         {
                             SceneManager.LoadSceneAsync("GameEnd");
+
+                            Cursor.lockState = CursorLockMode.None;
+                            escape = true;
 
                             FadeInOut.Instance.SetActive(true);
                         });
