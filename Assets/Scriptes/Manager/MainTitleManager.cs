@@ -25,6 +25,8 @@ public class MainTitleManager : MonoBehaviour
     private void Start()
     {
         settingManager = SettingManager.Instance;
+
+        SoundManager.Instance.SetBgmClips(0);
     }
 
     /// <summary>

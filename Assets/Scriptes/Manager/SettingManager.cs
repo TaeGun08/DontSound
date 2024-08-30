@@ -27,6 +27,13 @@ public class SettingManager : MonoBehaviour
     private Toggle windowToggle; // 창모드를 위한 토글
     private Button settingSaveButton; // 설정 저장 버튼
 
+    private bool saveCheck = false; // 저장했을 때만 값을 넣어주기 위한 함수
+    public bool SaveCheck
+    {
+        get { return saveCheck; }
+        set { saveCheck = value; }
+    }
+
     private void Awake()
     {
         if (Instance == null)
@@ -71,7 +78,7 @@ public class SettingManager : MonoBehaviour
     /// </summary>
     private void closedButton()
     {
-        closeButton.onClick.AddListener(() => 
+        closeButton.onClick.AddListener(() =>
         {
             settingObject.SetActive(false);
         });
@@ -107,7 +114,7 @@ public class SettingManager : MonoBehaviour
             windowToggle.isOn = saveSetting.windowToggle;
         }
 
-        Screen.SetResolution(1920, 1080, windowToggle.isOn);
+        Screen.SetResolution(1920, 1080, !windowToggle.isOn);
     }
 
     /// <summary>
@@ -115,7 +122,7 @@ public class SettingManager : MonoBehaviour
     /// </summary>
     private void saveButton()
     {
-        settingSaveButton.onClick.AddListener(() => 
+        settingSaveButton.onClick.AddListener(() =>
         {
             int count = sliders.Count;
 
@@ -129,7 +136,9 @@ public class SettingManager : MonoBehaviour
             string setSaveSetting = JsonConvert.SerializeObject(saveSetting);
             PlayerPrefs.SetString("saveSetting", setSaveSetting);
 
-            Screen.SetResolution(1920, 1080, windowToggle.isOn);
+            Screen.SetResolution(1920, 1080, !windowToggle.isOn);
+
+            saveCheck = true;
         });
     }
 
@@ -151,5 +160,24 @@ public class SettingManager : MonoBehaviour
     public GameObject SettingObject()
     {
         return settingObject;
+    }
+
+    /// <summary>
+    /// 설정된 슬라이더의 값을 가져오기 위한 함수
+    /// </summary>
+    /// <returns></returns>
+    public float GetSlidersValue(int _number)
+    {
+        switch (_number)
+        {
+            case 0:
+                return sliders[0].value;
+            case 1:
+                return sliders[1].value;
+            case 2:
+                return sliders[2].value;
+        }
+
+        return 0;
     }
 }

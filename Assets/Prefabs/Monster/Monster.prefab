@@ -118,8 +118,8 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 10
+  MinDistance: 0.5
+  MaxDistance: 3
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -1339,3 +1339,7 @@ MonoBehaviour:
   findPlayers:
   - {fileID: 5761038791942335939}
   - {fileID: 5334040865780044450}
+  fxsClips:
+  - {fileID: 8300000, guid: 4f4addfe5b3d7446cb4a03c581dc1ec8, type: 3}
+  - {fileID: 8300000, guid: 5dd77349ba149a543ac1adee5def0571, type: 3}
+  - {fileID: 8300000, guid: f529860a167606d4b8541906d2fdc8d1, type: 3}

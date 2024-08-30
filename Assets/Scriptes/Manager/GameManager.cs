@@ -47,6 +47,11 @@ public class GameManager : MonoBehaviour
         {
             optionButton.Add(option.transform.GetChild(0).GetChild(iNum).GetComponent<Button>());
         }
+
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.SetBgmClips(1);
+        }
     }
 
     private void Update()
@@ -63,6 +68,7 @@ public class GameManager : MonoBehaviour
         {
             if (option.activeSelf == false)
             {
+                CameraManager.Instance.SetVirtualCameraOnOff(1);
                 Cursor.lockState = CursorLockMode.None;
                 option.SetActive(true);
             }
@@ -72,6 +78,7 @@ public class GameManager : MonoBehaviour
             }
             else if (option.activeSelf == true && settingManager.SettingObject().activeSelf == false)
             {
+                CameraManager.Instance.SetVirtualCameraOnOff(0);
                 Cursor.lockState = CursorLockMode.Locked;
                 option.SetActive(false);
             }
@@ -79,6 +86,7 @@ public class GameManager : MonoBehaviour
        
         optionButton[0].onClick.AddListener(() =>
         {
+            CameraManager.Instance.SetVirtualCameraOnOff(0);
             Cursor.lockState = CursorLockMode.Locked;
             option.SetActive(false);
         });

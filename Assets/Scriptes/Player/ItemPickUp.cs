@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,6 +13,11 @@ public class ItemPickUp : MonoBehaviour
 
     private float screenHeight; //화면 세로 크기
     private float screenWidth; //화면 가로 크기
+
+    private bool notEscapeCheck; //탈출할 수 없을 때 뜨게 하기 위한 변수
+    private float notEscapeTextTimer; //열쇠가 부족하면 일정 시간동안 텍스트를 띄울 시간
+
+    private Color textColor;
 
     private void Awake()
     {
@@ -26,7 +32,28 @@ public class ItemPickUp : MonoBehaviour
 
     private void Update()
     {
+        timers();
         pickUpItemCheck();
+    }
+
+    /// <summary>
+    /// 타이머 모음
+    /// </summary>
+    private void timers()
+    {
+        if (notEscapeCheck == true)
+        {
+            notEscapeTextTimer -= Time.deltaTime;
+
+            textColor.a = notEscapeTextTimer;
+            CanvasManager.Instance.GetCanvas().transform.Find("DontEscape").GetComponent<TMP_Text>().color = textColor;
+
+            if (notEscapeTextTimer <= 0)
+            {
+                notEscapeCheck = false;
+                notEscapeTextTimer = 0f;
+            }
+        }
     }
 
     /// <summary>
@@ -72,7 +99,21 @@ public class ItemPickUp : MonoBehaviour
                 {
                     if (inventory.GetKeyCount() == 3)
                     {
-                        SceneManager.LoadSceneAsync("GameEnd");
+                        FadeInOut.Instance.SetActive(false, () =>
+                        {
+                            SceneManager.LoadSceneAsync("GameEnd");
+
+                            FadeInOut.Instance.SetActive(true);
+                        });
+                    }
+                    else
+                    {
+                        notEscapeCheck = true;
+                        TMP_Text text = CanvasManager.Instance.GetCanvas().transform.Find("DontEscape").GetComponent<TMP_Text>();
+                        textColor = text.color;
+                        textColor.a = 1;
+                        text.color = textColor;
+                        notEscapeTextTimer = 2f;
                     }
                 }
             }

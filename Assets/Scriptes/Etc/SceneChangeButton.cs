@@ -21,4 +21,9 @@ public class SceneChangeButton : MonoBehaviour
             });
         });
     }
+
+    private void Start()
+    {
+        SoundManager.Instance.BgmPause();
+    }
 }

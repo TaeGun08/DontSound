@@ -14,15 +14,29 @@ public class MoveController : MonoBehaviour
     [Header("플레이어 움직임 설정")]
     [SerializeField, Tooltip("플레이어의 걷는 속도")] private float walkSpeed;
     [SerializeField, Tooltip("플레이어의 뛰는 속도")] private float runSpeed;
+    [SerializeField, Tooltip("플레이어의 앉아서 걷는 속도")] private float sitSpeed;
     private bool runCheck = false; //플레이어가 달리고 있는지 확인하기 위한 함수, 달리고 있다면 스테미너가 충전되지 않도록 제어
     [SerializeField, Tooltip("플레이어의 중력")] private float gravity;
     [Space]
     [SerializeField, Tooltip("플레이어의 스테미너")] private float stamina;
+    [Space]
+    [SerializeField, Tooltip("플레이어의 머리 위치")] private Transform headTrs;
+
+    private AudioSource playerStepAudio; //플레이어 발걸음 사운드를 담을 오디오
+    private AudioSource playerBreatAudio; //플레이어 숨소리를 담을 오디오
+    private float audioTimer; //오디오를 시간이 지나면 실행시킬 수 있게 만들 변수
+    private bool audioPlay; //오디오를 실행시킬 변수
+    private float audioDelay; //몇 초 간격으로 실행시킬건지 정할 수 있게 만들 변수
+    private float curAudioSound; //현재 사운드
+    private bool staminaCheck = false; //스테미너가 일정 수치 이하로 떨어졌는지 체크하기 위한 변수
 
     private void Awake()
     {
         playerBehaviorCheck = GetComponent<PlayerBehaviorCheck>();
         characterController = GetComponent<CharacterController>();
+
+        playerStepAudio = transform.Find("PlayerStepSound").GetComponent<AudioSource>();
+        playerBreatAudio = transform.Find("PlayerBreatSound").GetComponent<AudioSource>();
     }
 
     private void Start()
@@ -34,10 +48,36 @@ public class MoveController : MonoBehaviour
 
     private void Update()
     {
+        playerTimers();
         playerMove();
         playerMouseRotate();
         playerGravity();
         playerStamina();
+        playerSit();
+
+        if (SoundManager.Instance != null && SoundManager.Instance.GetFxsVolume() != curAudioSound)
+        {
+            playerStepAudio.volume = SoundManager.Instance.GetFxsVolume();
+            playerBreatAudio.volume = SoundManager.Instance.GetFxsVolume();
+        }
+    }
+
+    /// <summary>
+    /// 플레이어와 관련된 타이머를 모아두는 곳
+    /// </summary>
+    private void playerTimers()
+    {
+        if (audioPlay == true)
+        {
+            audioTimer += Time.deltaTime;
+
+            if (audioTimer >= audioDelay)
+            {
+                playerStepAudio.Play();
+                audioTimer = 0;
+                audioPlay = false;
+            }
+        }
     }
 
     /// <summary>
@@ -76,7 +116,30 @@ public class MoveController : MonoBehaviour
         }
 
         playerBehaviorCheck.WalkRunCheck = runCheck ? 1 : 0;
-        characterController.Move(transform.rotation * moveDir.normalized * (runCheck == false ? walkSpeed : runSpeed) * Time.deltaTime);
+
+        if (playerBehaviorCheck.SitCheck == 0)
+        {
+            characterController.Move(transform.rotation * moveDir.normalized * (runCheck == false ? walkSpeed : runSpeed) * Time.deltaTime);
+        }
+        else
+        {
+            characterController.Move(transform.rotation * moveDir.normalized * sitSpeed * Time.deltaTime);
+        }
+
+        if (playerBehaviorCheck.IsBehavior == true && playerBehaviorCheck.WalkRunCheck == 0 && playerBehaviorCheck.SitCheck == 0)
+        {
+            audioPlay = true;
+            audioDelay = 1f;
+        }
+        else if (playerBehaviorCheck.IsBehavior == true && playerBehaviorCheck.WalkRunCheck == 1 && playerBehaviorCheck.SitCheck == 0)
+        {
+            audioPlay = true;
+            audioDelay = 0.5f;
+        }
+        else if (playerBehaviorCheck.IsBehavior == false || playerBehaviorCheck.SitCheck == 1)
+        {
+            playerStepAudio.Pause();
+        }
 
         //if (!Input.GetKey(KeyCode.W) &&
         //    !Input.GetKey(KeyCode.S) &&
@@ -218,6 +281,17 @@ public class MoveController : MonoBehaviour
             stamina = 100;
         }
 
+        if (stamina <= 0 && staminaCheck == false)
+        {
+            playerBreatAudio.Play();
+            staminaCheck = true;
+        }
+        else if (stamina >= 30 && staminaCheck == true)
+        {
+            playerBreatAudio.Pause();
+            staminaCheck = false;
+        }
+
         if (!Input.GetKey(KeyCode.LeftShift) && stamina < 100)
         {
             stamina += Time.deltaTime * 10;
@@ -234,6 +308,23 @@ public class MoveController : MonoBehaviour
         else
         {
             canvasManager.GetCanvas().transform.Find("StaminaBar").gameObject.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// 플레이어 앉기 기능
+    /// </summary>
+    private void playerSit()
+    {
+        if (Input.GetKey(KeyCode.LeftControl) && !(Input.GetKey(KeyCode.LeftShift) && stamina != 0))
+        {
+            playerBehaviorCheck.SitCheck = 1;
+            headTrs.localPosition = new Vector3(1, 0, 0);
+        }
+        else
+        {
+            playerBehaviorCheck.SitCheck = 0;
+            headTrs.localPosition = new Vector3(0, 0, 0);
         }
     }
 

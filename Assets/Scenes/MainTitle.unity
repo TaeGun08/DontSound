@@ -354,12 +354,10 @@ MonoBehaviour:
   bgmAudioSource: {fileID: 341209194}
   fxsAudioSource: {fileID: 341209193}
   bgmClips:
+  - {fileID: 8300000, guid: c3caf22f0175b2a47bcc2a98801c65ad, type: 3}
   - {fileID: 8300000, guid: 8f5c74e4a95ae7d4f946eaf1f4f9e735, type: 3}
   - {fileID: 8300000, guid: 0edf44f758f234a44a5691e80a4d327e, type: 3}
-  fxsClips:
-  - {fileID: 8300000, guid: 5dd77349ba149a543ac1adee5def0571, type: 3}
-  - {fileID: 8300000, guid: f529860a167606d4b8541906d2fdc8d1, type: 3}
-  - {fileID: 8300000, guid: 01b2c3da344f098449f95ad794ddae9b, type: 3}
+  fxsClips: []
 --- !u!82 &341209193
 AudioSource:
   m_ObjectHideFlags: 0
@@ -467,10 +465,10 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0

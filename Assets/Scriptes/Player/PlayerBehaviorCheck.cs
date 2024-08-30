@@ -31,6 +31,19 @@ public class PlayerBehaviorCheck : MonoBehaviour
         }
     }
 
+    private float sitCheck; //앉았는지 체크
+    public float SitCheck
+    {
+        get
+        {
+            return sitCheck;
+        }
+        set
+        {
+            sitCheck = value;
+        }
+    }
+
     private float isHorizontal; //수평으로 움직이고 있는지 체크
     public float IsHorizontal
     {
