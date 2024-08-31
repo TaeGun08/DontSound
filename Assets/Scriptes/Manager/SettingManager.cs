@@ -1,3 +1,4 @@
+using Cinemachine;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -59,10 +60,7 @@ public class SettingManager : MonoBehaviour
 
         windowToggle = settingObject.transform.GetChild(0).Find("WindowMode").GetComponent<Toggle>();
         settingSaveButton = settingObject.transform.GetChild(0).Find("Save").GetComponent<Button>();
-    }
 
-    private void Start()
-    {
         closedButton();
         saveSettingCheck();
         saveButton();
@@ -137,6 +135,11 @@ public class SettingManager : MonoBehaviour
             PlayerPrefs.SetString("saveSetting", setSaveSetting);
 
             Screen.SetResolution(1920, 1080, !windowToggle.isOn);
+
+            if (CameraManager.Instance != null)
+            {
+                CameraManager.Instance.SetMouseSensitivity(sliders[2].value);
+            }
 
             saveCheck = true;
         });

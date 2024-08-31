@@ -12,6 +12,7 @@ public class CameraManager : MonoBehaviour
 
     [Header("버추얼 카메라")]
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
+    private CinemachinePOV cinemachinePov;
 
     private void Awake()
     {
@@ -23,6 +24,14 @@ public class CameraManager : MonoBehaviour
         {
             Destroy(this);
         }
+
+        cinemachinePov = virtualCamera.GetCinemachineComponent<CinemachinePOV>();
+    }
+
+    private void Start()
+    {
+        cinemachinePov.m_HorizontalAxis.m_MaxSpeed = SettingManager.Instance.GetSlidersValue(2) * 300;
+        cinemachinePov.m_VerticalAxis.m_MaxSpeed = SettingManager.Instance.GetSlidersValue(2) * 300;
     }
 
     /// <summary>
@@ -41,5 +50,16 @@ public class CameraManager : MonoBehaviour
     public void SetVirtualCameraOnOff(int _onOff)
     {
         virtualCamera.gameObject.SetActive(_onOff == 0 ? true : false);
+    }
+
+    /// <summary>
+    /// SettingManger에서 마우스 민감도를 넣어주기 위한 함수
+    /// </summary>
+    /// <param name="_mouseSensitivity"></param>
+    /// <param name="_mouseSensitivity"></param>
+    public void SetMouseSensitivity(float _mouseSensitivity)
+    {
+        cinemachinePov.m_HorizontalAxis.m_MaxSpeed = _mouseSensitivity * 300;
+        cinemachinePov.m_VerticalAxis.m_MaxSpeed = _mouseSensitivity * 300;
     }
 }

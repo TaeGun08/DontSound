@@ -199,7 +199,7 @@ public class Monster : MonoBehaviour
     /// </summary>
     private void playerBehaviorCheck()  //findPlayers[1].GetPlayer()은 몬스터의 근처에 왔을 때 움직이면 체크하는 콜라이더
     {                                                //findPlayers[0].GetPlayer()은 몬스터의 멀리에서 움직였을 때 체크하는 콜라이더
-        if (findPlayers[1].GetPlayer() != null )
+        if (findPlayers[1].GetPlayer() != null)
         { //플레이어를 추적하는 콜라이더에 있고, 플레이어가 움직이고 있다면 화남 상태로 돌입할 수 있도록 만들어 줌
             if (playerBehavior.IsBehavior == true)
             {
