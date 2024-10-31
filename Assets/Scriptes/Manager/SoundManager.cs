@@ -27,6 +27,12 @@ public class SoundManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        bgmAudioSource.volume = SettingManager.Instance.GetSlidersValue(0);
+        fxsAudioSource.volume = SettingManager.Instance.GetSlidersValue(1);
+    }
+
     private void Update()
     {
         if (SettingManager.Instance.SaveCheck == true)
